@@ -1,5 +1,5 @@
 import { randFloat } from 'three/src/math/MathUtils';
-import { Mesh, BoxGeometry, MeshLambertMaterial, Vector3, Scene, MeshBasicMaterial } from "three";
+import { Mesh, BoxGeometry, MeshLambertMaterial, Vector3, Scene, MeshBasicMaterial, BufferGeometry, Material } from "three";
 import { randomColour } from "./colours";
 import { pick } from "./randomUtils";
 
@@ -113,27 +113,21 @@ export function createRoad(): Mesh {
 
 export function createRoadStripes(scene: Scene, length: number): void {
     const numOfStripes = 540 / length;
-
+    const geometry = new BoxGeometry(0.4, 0.021, length);
+    const material = new MeshBasicMaterial({//consider material that responds to light, instead 
+        color: 0xffffff
+    })
     for (let i = 0; i < numOfStripes; i += 2) {
         const startPos = length * i + length;
-        const roadStripe = createRoadStripe(length, startPos);
+        const roadStripe = createRoadStripe(startPos, geometry, material);
         scene.add(roadStripe);
         roadStripes.push(roadStripe);
     }
 }
 
-export function createRoadStripe(length: number | undefined, startPos: number): Mesh {
-    const geometry = new BoxGeometry(0.4, 0.021, length);
-    const material = new MeshBasicMaterial({
-        color: 0xffffff
-    })
-
+function createRoadStripe(startPos: number, geometry: BufferGeometry, material: Material): Mesh {
     const mesh = new Mesh(geometry, material);
-
-    const pos = new Vector3(0, 0, -startPos);
-
-    mesh.position.copy(pos);
-
+    mesh.position.set(0, 0, -startPos);
     return mesh;
 }
 
