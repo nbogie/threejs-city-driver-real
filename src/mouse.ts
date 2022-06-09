@@ -28,8 +28,8 @@ export function setupMouse(canvasElem: HTMLCanvasElement): Mouse {
     canvasElem.addEventListener('mouseup', handleMouseUp);
 
     function handleMouseMove(event: MouseEvent) {
-        mouse.y = mapLinear(event.clientY, 0, canvasElem.width, -0.5, 0.5);
-        mouse.x = mapLinear(event.clientX, 0, canvasElem.height, -0.5, 0.5);
+        mouse.x = mapLinear(event.clientX, 0, canvasElem.width, -0.5, 0.5);
+        mouse.y = mapLinear(event.clientY, 0, canvasElem.height, -0.5, 0.5);
     }
 
     function handleMouseDown(ev: MouseEvent) {
