@@ -9,8 +9,9 @@ export interface Pedestrian {
     pos: Vector3 | null;
 }
 
+export type CamNumber = 0 | 1 | 2 | 3 | 4 | 5;
 export interface CamConfig {
-    camNumber: number;
+    camNumber: CamNumber;
     pedestrian: Pedestrian;
     shakeAmount: number;
 }
@@ -22,7 +23,7 @@ export function setupCamera(dim: { w: number, h: number }): PerspectiveCamera {
 }
 
 export function cycleCameras(camConfig: CamConfig): void {
-    camConfig.camNumber = (camConfig.camNumber + 1) % 6;
+    camConfig.camNumber = ((camConfig.camNumber + 1) % 6) as CamNumber;
 }
 
 export function updateCamera({ camNumber, pedestrian, shakeAmount }: CamConfig, myVehicle: Car, cam: Camera, frameCount: number): void {
