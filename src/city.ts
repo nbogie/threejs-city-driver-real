@@ -3,19 +3,17 @@ import { Mesh, BoxGeometry, MeshLambertMaterial, Vector3, Scene, MeshBasicMateri
 import { randomColour } from "./colours";
 import { pick } from "./randomUtils";
 
-
-const buildings: Mesh[] = [];
-const roadStripes: Mesh[] = [];
-
-export function createCity(scene: Scene, numOfBuildings: number): void {
+export function createCity(scene: Scene, numOfBuildings: number): Mesh[] {
+    const buildings = [];
     for (let i = 0; i < numOfBuildings; i++) {
         const building = createBuilding();
         scene.add(building);
         buildings.push(building);
     }
+    return buildings;
 }
 
-export function updateBuildingsFromHeaven(carPos: Vector3): void {
+export function updateBuildingsFromHeaven(buildings: Mesh[], carPos: Vector3): void {
     const growthLimitNear = carPos.z - 200;
     const growthLimitFar = carPos.z - 300;
     for (const b of buildings) {
@@ -30,7 +28,7 @@ export function updateBuildingsFromHeaven(carPos: Vector3): void {
     }
 }
 
-export function updateBuildingsHill(carPos: Vector3): void {
+export function updateBuildingsHill(buildings: Mesh[], carPos: Vector3): void {
     const growthLimitNear = carPos.z - 150;
     const growthLimitFar = carPos.z - 300;
 
@@ -46,7 +44,7 @@ export function updateBuildingsHill(carPos: Vector3): void {
     }
 }
 
-export function updateBuildings(carPos: Vector3): void {
+export function updateBuildings(buildings: Mesh[], carPos: Vector3): void {
     const growthLimitNear = carPos.z - 225;
     const growthLimitFar = carPos.z - 300;
     for (const b of buildings) {
@@ -90,7 +88,7 @@ export function createBuilding(): Mesh {
     return mesh;
 }
 
-export function recycleBuildings(carPos: Vector3): void {
+export function recycleBuildings(buildings: Mesh[], carPos: Vector3): void {
     for (const b of buildings) {
         if (b.position.z - 30 > carPos.z) {
             //TODO: change colour, dimensions, and x position, too.
@@ -111,7 +109,8 @@ export function createRoad(): Mesh {
     return mesh;
 }
 
-export function createRoadStripes(scene: Scene, length: number): void {
+export function createRoadStripes(scene: Scene, length: number): Mesh[] {
+    const roadStripes: Mesh[] = [];
     const numOfStripes = 540 / length;
     const geometry = new BoxGeometry(0.4, 0.021, length);
     const material = new MeshBasicMaterial({//consider material that responds to light, instead 
@@ -123,6 +122,7 @@ export function createRoadStripes(scene: Scene, length: number): void {
         scene.add(roadStripe);
         roadStripes.push(roadStripe);
     }
+    return roadStripes;
 }
 
 function createRoadStripe(startPos: number, geometry: BufferGeometry, material: Material): Mesh {
@@ -131,7 +131,7 @@ function createRoadStripe(startPos: number, geometry: BufferGeometry, material: 
     return mesh;
 }
 
-export function recycleRoadStripes(carPos: Vector3): void {
+export function recycleRoadStripes(roadStripes: Mesh[], carPos: Vector3): void {
     for (const rs of roadStripes) {
         if (rs.position.z - 100 > carPos.z) {
             rs.position.z = carPos.z - 400;

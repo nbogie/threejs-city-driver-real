@@ -4,7 +4,7 @@
 // 1031685 threejs rainbow trails: https://openprocessing.org/sketch/1031685
 // 1020528 gintaras added sound, diff camera angle: https://openprocessing.org/sketch/1020528
 
-import { Scene } from 'three';
+import { Mesh, Scene } from 'three';
 import { mapLinear } from 'three/src/math/MathUtils';
 import { CamConfig, cycleCameras, setupCamera, updateCamera } from './camera';
 import { createCity, createGroundPlane, createRoad, createRoadStripes, recycleBuildings, recycleRoadStripes, updateBuildings } from './city';
@@ -114,10 +114,10 @@ export function setupThreeJSScene(): void {
     loadCarModel(scene);
     loadSounds();
 
-    createCity(scene, 200);
+    const buildings: Mesh[] = createCity(scene, 200);
     createSheepies(scene);
     const road = createRoad();
-    createRoadStripes(scene, 10);
+    const roadStripes: Mesh[] = createRoadStripes(scene, 10);
     const ground = createGroundPlane();
     scene.add(road);
     scene.add(ground);
@@ -138,8 +138,8 @@ export function setupThreeJSScene(): void {
         updateLightsAndSky(mySceneLights, scene, frameCount);
         updateCamera(camConfig, myVehicle, camera, frameCount);
 
-        recycleBuildings(myVehicle.mesh.position);
-        updateBuildings(myVehicle.mesh.position);
+        recycleBuildings(buildings, myVehicle.mesh.position);
+        updateBuildings(buildings, myVehicle.mesh.position);
 
         updateSmokeParticles();
         deleteSmokeParticles(scene);
@@ -148,7 +148,7 @@ export function setupThreeJSScene(): void {
             shakeCamera
         }, scene);
 
-        recycleRoadStripes(myVehicle.mesh.position);
+        recycleRoadStripes(roadStripes, myVehicle.mesh.position);
 
         dampenShake();
         stats.update();
