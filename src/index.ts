@@ -22,16 +22,14 @@ export function setupThreeJSScene(): void {
     const scene = new Scene();
 
     const stats = setupStatsPanel();
+
     const dimensions = { w: window.innerWidth, h: window.innerHeight };
 
     const camera = setupCamera(dimensions);
 
     const renderer = setupRenderer(camera, dimensions);
 
-    // const controls = setupOrbitControls(camera, renderer.domElement);
-
     const { axesHelper, gridHelper } = setupHelpers(scene);
-
 
     function handleMouseMove(event: MouseEvent) {
         mouse.y = mapLinear(event.clientY, 0, window.innerHeight, -0.5, 0.5);
@@ -46,7 +44,6 @@ export function setupThreeJSScene(): void {
             mouse.rightButtonDown = true;
         }
     }
-
 
     function handleMouseUp(ev: MouseEvent) {
         if (ev.button === 0) {
@@ -91,7 +88,6 @@ export function setupThreeJSScene(): void {
         leftButtonDown: false,
         rightButtonDown: false
     }
-
 
     const camConfig: CamConfig = {
         camNumber: 2,
@@ -161,7 +157,9 @@ export function setupThreeJSScene(): void {
         stats.update();
 
         renderer.render(scene, camera);
+
         requestAnimationFrame(renderAndUpdateWorld);
+
         frameCount += 1;
     }
 
