@@ -1,4 +1,4 @@
-import { AmbientLight, Color, DirectionalLight, DirectionalLightHelper, Scene } from "three";
+import { AmbientLight, Color, DirectionalLight, Scene } from "three";
 import { mapLinear } from "three/src/math/MathUtils";
 
 interface MySceneLights {
@@ -9,10 +9,10 @@ interface MySceneLights {
 
 export function makeLightsAndAddToScene(scene: Scene): MySceneLights {
     const frontDirectionalLight = new DirectionalLight(0xFFA050);
-    frontDirectionalLight.position.set(2, 2, 100);
+    frontDirectionalLight.position.set(-30, 2, 14);
 
-    const lowDirectionalLight = new DirectionalLight(0x0060FF);
-    lowDirectionalLight.position.set(1, -2, -3);
+    const lowDirectionalLight = new DirectionalLight(0x0060FF, 0.3);
+    lowDirectionalLight.position.set(5, -2, -8);
 
     const ambLight = new AmbientLight(0xffffff, 0.3);
     scene.add(ambLight);
