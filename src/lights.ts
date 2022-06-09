@@ -1,6 +1,5 @@
 import { AmbientLight, DirectionalLight, Scene } from "three";
 
-
 export function makeLightsAndAddToScene(scene: Scene): { ambLight: AmbientLight; light: DirectionalLight; lowLight: DirectionalLight; } {
     const light = new DirectionalLight(0xFFA050);
     light.position.set(2, 2, 100);

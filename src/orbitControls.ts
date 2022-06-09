@@ -1,7 +1,6 @@
 import { Camera } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-
 /** 
  * @param htmlElement - html (canvas?) element on which to listen for mouse events 
  * @param camera - camera to move, rotate and zoom based on user input

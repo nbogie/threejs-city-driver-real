@@ -1,7 +1,7 @@
 import { Camera, Mesh, PerspectiveCamera, Vector3 } from "three";
 import { randFloatSpread } from "three/src/math/MathUtils";
 import { pick } from "./randomUtils";
-import { getAspect } from "./setupRenderer";
+import { getAspect } from "./renderer";
 import { farthestAirborneSheep } from "./sheep";
 import { Car } from "./vehicle";
 
