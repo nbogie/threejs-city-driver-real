@@ -16,6 +16,7 @@ import { setupStatsPanel } from './statsPanel';
 import { createSheepies, updateSheepies } from './sheep';
 import { updateSmokeParticles, deleteSmokeParticles } from './smoke';
 import { createVehicle, loadCarModel, Car, updateCar } from './vehicle';
+import { loadSounds } from './sound';
 
 export function setupThreeJSScene(): void {
 
@@ -111,6 +112,7 @@ export function setupThreeJSScene(): void {
 
     const myVehicle: Car = createVehicle();
     loadCarModel(scene);
+    loadSounds();
 
     createCity(scene, 200);
     createSheepies(scene);

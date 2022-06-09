@@ -2,6 +2,7 @@ import { Object3D, Scene, Vector3 } from "three";
 import { randFloat, randFloatSpread } from "three/src/math/MathUtils";
 import { loadModel } from "./loadModel";
 import { createParticles } from "./smoke";
+import { playSheepHitSound } from "./sound";
 
 // this tab copied from https://www.openprocessing.org/sketch/1028620
 const sheepies: Sheepie[] = [];
@@ -121,6 +122,7 @@ export function hitSheep(sheep: Sheepie, {
     //todo: use the car's velocity and positioning to allow skill-booping the sheep into outer space / onto targets
 
     shakeCamera(2); //todo: shake according to sheep size?  e.g. sheep.mesh.scale.x ?
+    playSheepHitSound();
 }
 
 export function respawnSheep(sheep: Sheepie, playerPos: Vector3): void {
