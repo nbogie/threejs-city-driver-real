@@ -1,4 +1,4 @@
-import { Camera, Mesh, PerspectiveCamera, Vector3 } from "three";
+import { Camera, Object3D, PerspectiveCamera, Vector3 } from "three";
 import { randFloatSpread } from "three/src/math/MathUtils";
 import { pick } from "./randomUtils";
 import { getAspect } from "./renderer";
@@ -53,7 +53,7 @@ export function updateCamera({ camNumber, pedestrian, shakeAmount }: CamConfig, 
     }
 }
 
-export function updateAutoOrbitCam(targetMesh: Mesh, cam: Camera, t: number): void {
+export function updateAutoOrbitCam(targetMesh: Object3D, cam: Camera, t: number): void {
     const radius = 10;
     cam.position.y = 3;
     cam.position.z = targetMesh.position.z + radius * Math.cos(t);
@@ -61,7 +61,7 @@ export function updateAutoOrbitCam(targetMesh: Mesh, cam: Camera, t: number): vo
     cam.lookAt(targetMesh.position);
 }
 
-export function updateChaseCam(targetMesh: Mesh, cam: Camera, t: number): void {
+export function updateChaseCam(targetMesh: Object3D, cam: Camera, t: number): void {
     cam.position.z = targetMesh.position.z + 5;
     cam.position.y = targetMesh.position.y + 2;
     cam.position.x = targetMesh.position.x + 5 * Math.sin(t);
@@ -71,7 +71,7 @@ export function updateChaseCam(targetMesh: Mesh, cam: Camera, t: number): void {
 
 }
 
-export function updateBoringChaseCam(targetMesh: Mesh, cam: Camera, shakeAmount: number): void {
+export function updateBoringChaseCam(targetMesh: Object3D, cam: Camera, shakeAmount: number): void {
     cam.position.x = targetMesh.position.x / 2;
     cam.position.y = 3;
     cam.position.z = targetMesh.position.z + 6;
@@ -98,7 +98,7 @@ export function updateSheepCam(cam: Camera, fnWhenNothingExcitingHappening: () =
     }
 }
 
-export function updatePedestrianCam(targetMesh: Mesh, cam: Camera, pedestrian: Pedestrian): void {
+export function updatePedestrianCam(targetMesh: Object3D, cam: Camera, pedestrian: Pedestrian): void {
     //make a new pedestrian position if we don't have one or the old one is too far behind car
     if (!pedestrian.pos || pedestrian.pos.z > (targetMesh.position.z + 300)) {
         pedestrian.pos = new Vector3(pick([-6, 6]), 1, targetMesh.position.z - 200);
@@ -107,7 +107,7 @@ export function updatePedestrianCam(targetMesh: Mesh, cam: Camera, pedestrian: P
     cam.lookAt(targetMesh.position);
 }
 
-export function updateFirstPersonCam(targetMesh: Mesh, cam: Camera): void {
+export function updateFirstPersonCam(targetMesh: Object3D, cam: Camera): void {
     // TODO copy rotation from the car, not just position!
     // cam.quaternion.copy(targetMesh.quaternion);
     cam.position.copy(targetMesh.position);
@@ -118,7 +118,7 @@ export function updateFirstPersonCam(targetMesh: Mesh, cam: Camera): void {
 }
 
 
-export function updateRearFacingCam(targetMesh: Mesh, cam: Camera, shakeAmount: number): void {
+export function updateRearFacingCam(targetMesh: Object3D, cam: Camera, shakeAmount: number): void {
     cam.position.x = targetMesh.position.x;
     cam.position.y = 3;
     cam.position.z = targetMesh.position.z - 6;

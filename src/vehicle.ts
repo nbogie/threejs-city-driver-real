@@ -1,6 +1,5 @@
-import { BoxGeometry, MeshLambertMaterial, Mesh, Vector3, Group, Scene } from "three";
+import { Group, Scene, Vector3 } from "three";
 import { lerp, mapLinear, randFloatSpread } from "three/src/math/MathUtils";
-import { randomColour } from "./colours";
 import { loadModel } from "./loadModel";
 import { Mouse } from "./mouse";
 import { emitSmokeParticle } from "./smoke";
@@ -8,42 +7,35 @@ import { emitSmokeParticle } from "./smoke";
 const carMaxSpeed = 1.1;
 
 export interface Car {
-    mesh: Mesh;
+    mesh: Group;
     vel: Vector3;
     acc: Vector3;
     availableAccel: number;
-    dragsterModel: Group;
+    isFlying: boolean;
 }
 
 export async function createVehicle(scene: Scene): Promise<Car> {
-    const geometry = new BoxGeometry(1, 0.5, 3);
-
-    const material = new MeshLambertMaterial({
-        color: randomColour()
-    });
-
-    const mesh = new Mesh(geometry, material);
     const dragsterModel = await loadCarModel(scene);
 
     const car = {
-        mesh,
+        mesh: dragsterModel,
         vel: new Vector3(0, 0, -carMaxSpeed),
         availableAccel: 0.2,
         acc: new Vector3(0, 0, 0),
-        dragsterModel
+        isFlying: false
     }
     return car;
 }
 
 export async function loadCarModel(scene: Scene): Promise<Group> {
     const url = "./assets/dragster.glb";
-    const dragsterModel = await loadModel(url)
-    if (!dragsterModel) {
-        throw new Error("error loading dragster model  from " + url);
+    const carModel = await loadModel(url)
+    if (!carModel) {
+        throw new Error("error loading car model from " + url);
     }
-    dragsterModel.rotation.y = Math.PI;
-    scene.add(dragsterModel);
-    return dragsterModel;
+    carModel.rotation.y = Math.PI;
+    scene.add(carModel);
+    return carModel;
 }
 
 export function updateCar(mouse: Mouse, myVehicle: Car, scene: Scene): void {
@@ -65,25 +57,21 @@ export function updateCar(mouse: Mouse, myVehicle: Car, scene: Scene): void {
     myVehicle.vel = myVehicle.vel.multiplyScalar(0.995).clampScalar(-carMaxSpeed, 0);
     myVehicle.mesh.position.add(myVehicle.vel);
 
-    // myVehicle.mesh.position.y = mouse.y;
     const desiredCarX = mapLinear(mouse.x, -0.5, 0.5, -3, 3);
-    // const desiredCarY = mapLinear(mouse.y, -0.5, 0.5, 5, 0);
+    const desiredCarY = myVehicle.isFlying ? mapLinear(mouse.y, -0.5, 0.5, 5, 0) : 0;
     myVehicle.mesh.position.x = lerp(myVehicle.mesh.position.x, desiredCarX, 0.1);
-    // myVehicle.mesh.position.y = lerp(myVehicle.mesh.position.y, desiredCarY, 0.1);
+    myVehicle.mesh.position.y = lerp(myVehicle.mesh.position.y, desiredCarY, 0.1);
 
     const deltaX = desiredCarX - myVehicle.mesh.position.x;
     const rollAngle = mapLinear(deltaX, -6, 6, Math.PI / 6, -Math.PI / 6);
     const yawAngle = Math.PI + rollAngle;
     const pitchAngle = mapLinear(myVehicle.acc.z, 0.2, -0.2, -1, 1) * Math.PI / 16;
-    const dragsterModel = myVehicle.dragsterModel;
+    const dragsterModel = myVehicle.mesh;
 
-    dragsterModel.position.copy(myVehicle.mesh.position);
-
-    dragsterModel.rotation.z = rollAngle;
-    dragsterModel.rotation.y = yawAngle;
     dragsterModel.rotation.x = pitchAngle;
-    myVehicle.mesh.rotation.z = rollAngle;
-    myVehicle.mesh.rotation.y = Math.PI + rollAngle;
+    dragsterModel.rotation.y = yawAngle;
+    dragsterModel.rotation.z = rollAngle;
+
 
     if (isBraking && myVehicle.vel.length() > 0.2) {
         emitSmokeParticle(scene, dragsterModel, randFloatSpread(2), true);
@@ -105,12 +93,12 @@ export function updateCar(mouse: Mouse, myVehicle: Car, scene: Scene): void {
 
 
     // if car is going fast and turning fast
-    if (myVehicle.vel.length() > 0.8 && (deltaX > 1 || deltaX < -1) && dragsterModel) {
+    if (myVehicle.vel.length() > 0.8 && (deltaX > 1 || deltaX < -1)) {
         // it should emit particles from the outside wheel
-        // myVehicle.mesh.visible = true;
+        // dragsterModel.visible = true;
 
         emitSmokeParticle(scene, dragsterModel, deltaX, false);
     } else {
-        // myVehicle.mesh.visible = false;
+        // dragsterModel.visible = false;
     }
 }

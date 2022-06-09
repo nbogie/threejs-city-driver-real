@@ -16,7 +16,7 @@ import { createSheepies, updateSheepies } from './sheep';
 import { deleteSmokeParticles, updateSmokeParticles } from './smoke';
 import { loadSounds } from './sound';
 import { setupStatsPanel } from './statsPanel';
-import { Car, createVehicle, loadCarModel, updateCar } from './vehicle';
+import { Car, createVehicle, updateCar } from './vehicle';
 
 export async function setupThreeJSScene(): Promise<void> {
 
