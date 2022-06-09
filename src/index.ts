@@ -9,7 +9,7 @@ import { mapLinear } from 'three/src/math/MathUtils';
 import { CamConfig, cycleCameras, setupCamera, updateCamera } from './camera';
 import { createCity, createGroundPlane, createRoad, createRoadStripes, recycleBuildings, recycleRoadStripes, updateBuildings } from './city';
 import { setupHelpers } from './helpers';
-import { makeLightsAndAddToScene, updateLights } from './lights';
+import { makeLightsAndAddToScene, updateLightsAndSky } from './lights';
 import { Mouse } from './mouse';
 import { setupRenderer } from './renderer';
 import { createSheepies, updateSheepies } from './sheep';
@@ -135,7 +135,7 @@ export function setupThreeJSScene(): void {
         updateCar(mouse, myVehicle, scene);
         updateHelpers(myVehicle);
 
-        updateLights(mySceneLights, scene, frameCount);
+        updateLightsAndSky(mySceneLights, scene, frameCount);
         updateCamera(camConfig, myVehicle, camera, frameCount);
 
         recycleBuildings(myVehicle.mesh.position);

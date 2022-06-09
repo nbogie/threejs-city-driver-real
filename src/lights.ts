@@ -29,7 +29,7 @@ export function makeLightsAndAddToScene(scene: Scene): MySceneLights {
     // scene.add(new THREE.DirectionalLightHelper(lowLight, 5));
 }
 
-export function updateLights({ ambLight }: MySceneLights, scene: Scene, frameCount: number): void {
+export function updateLightsAndSky({ ambLight }: MySceneLights, scene: Scene, frameCount: number): void {
     const skyColourTwo = new Color('skyblue');
 
     const skyFraction = mapLinear(Math.sin(frameCount / 1000), -1, 1, 0, 1);
