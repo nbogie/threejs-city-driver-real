@@ -12,7 +12,7 @@ import { setupHelpers } from './helpers';
 import { makeLightsAndAddToScene, updateLightsAndSky } from './lights';
 import { Mouse } from './mouse';
 import { setupRenderer } from './renderer';
-import { createSheepies, updateSheepies } from './sheep';
+import { createSheepies, Sheepie, updateSheepies } from './sheep';
 import { deleteSmokeParticles, updateSmokeParticles } from './smoke';
 import { loadSounds } from './sound';
 import { setupStatsPanel } from './statsPanel';
@@ -117,7 +117,8 @@ export async function setupThreeJSScene(): Promise<void> {
     loadSounds();
 
     const buildings: Mesh[] = createCity(scene, 200);
-    createSheepies(scene);
+    const sheepies: Sheepie[] = await createSheepies(scene);
+
     const road = createRoad();
     const roadStripes: Mesh[] = createRoadStripes(scene, 10);
     const ground = createGroundPlane();
@@ -138,7 +139,7 @@ export async function setupThreeJSScene(): Promise<void> {
         updateHelpers(myVehicle);
 
         updateLightsAndSky(mySceneLights, scene, frameCount);
-        updateCamera(camConfig, myVehicle, camera, frameCount);
+        updateCamera(camConfig, myVehicle, sheepies, camera, frameCount);
 
         recycleBuildings(buildings, myVehicle.mesh.position);
         updateBuildings(buildings, myVehicle.mesh.position);
@@ -146,7 +147,7 @@ export async function setupThreeJSScene(): Promise<void> {
         updateSmokeParticles();
         deleteSmokeParticles(scene);
 
-        updateSheepies(myVehicle.mesh.position, myVehicle.mesh.position, {
+        updateSheepies(sheepies, myVehicle.mesh.position, myVehicle.mesh.position, {
             shakeCamera
         }, scene);
 

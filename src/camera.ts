@@ -2,7 +2,7 @@ import { Camera, Object3D, PerspectiveCamera, Vector3 } from "three";
 import { randFloatSpread } from "three/src/math/MathUtils";
 import { pick } from "./randomUtils";
 import { getAspect } from "./renderer";
-import { farthestAirborneSheep } from "./sheep";
+import { farthestAirborneSheep, Sheepie } from "./sheep";
 import { Car } from "./vehicle";
 
 export interface Pedestrian {
@@ -26,7 +26,7 @@ export function cycleCameras(camConfig: CamConfig): void {
     camConfig.camNumber = ((camConfig.camNumber + 1) % 7) as CamNumber;
 }
 
-export function updateCamera({ camNumber, pedestrian, shakeAmount }: CamConfig, myVehicle: Car, cam: Camera, frameCount: number): void {
+export function updateCamera({ camNumber, pedestrian, shakeAmount }: CamConfig, myVehicle: Car, sheepies: Sheepie[], cam: Camera, frameCount: number): void {
     switch (camNumber) {
         case 0:
             updateAutoOrbitCam(myVehicle.mesh, cam, frameCount / 80);
@@ -44,7 +44,7 @@ export function updateCamera({ camNumber, pedestrian, shakeAmount }: CamConfig, 
             updateFirstPersonCam(myVehicle.mesh, cam);
             break;
         case 5:
-            updateSheepCam(cam, () => updateBoringChaseCam(myVehicle.mesh, cam, shakeAmount));
+            updateSheepCam(cam, sheepies, () => updateBoringChaseCam(myVehicle.mesh, cam, shakeAmount));
             break;
         case 6:
             updateRearFacingCam(myVehicle.mesh, cam, shakeAmount);
@@ -86,8 +86,8 @@ export function updateBoringChaseCam(targetMesh: Object3D, cam: Camera, shakeAmo
 
 }
 
-export function updateSheepCam(cam: Camera, fnWhenNothingExcitingHappening: () => void): void {
-    const sheep = farthestAirborneSheep();
+export function updateSheepCam(cam: Camera, sheepies: Sheepie[], fnWhenNothingExcitingHappening: () => void): void {
+    const sheep = farthestAirborneSheep(sheepies);
     if (!sheep) {
         fnWhenNothingExcitingHappening();
     } else {

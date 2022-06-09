@@ -4,9 +4,6 @@ import { loadModel } from "./loadModel";
 import { createParticles } from "./smoke";
 import { playSheepHitSound } from "./sound";
 
-// this tab copied from https://www.openprocessing.org/sketch/1028620
-const sheepies: Sheepie[] = [];
-
 export interface Sheepie {
     mesh: Object3D,
     velocity: Vector3,
@@ -14,7 +11,8 @@ export interface Sheepie {
     hue: number
 }
 
-export async function createSheepies(scene: Scene): Promise<void> {
+export async function createSheepies(scene: Scene): Promise<Sheepie[]> {
+    const sheepies: Sheepie[] = [];
     //todo: i think we should use Instanced mesh to share the geometry across all sheep meshes
     //https://threejs.org/docs/#api/en/objects/InstancedMesh
     //However, we animate /toggle visibility parts of each mesh copy differently
@@ -38,6 +36,7 @@ export async function createSheepies(scene: Scene): Promise<void> {
         scene.add(clone);
         sheepies.push(sheepObj);
     }
+    return sheepies;
 }
 
 /** 
@@ -48,7 +47,7 @@ export async function createSheepies(scene: Scene): Promise<void> {
  * @param carPosition position of car - used to decide which sheep are scared and/or booped
  * @param shakeCamera function to call when we need to shake the camera
 */
-export function updateSheepies(carPosition: Vector3, cleanupPosition: Vector3, {
+export function updateSheepies(sheepies: Sheepie[], carPosition: Vector3, cleanupPosition: Vector3, {
     shakeCamera
 }: { shakeCamera: () => void }, scene: Scene): void {
 
@@ -84,7 +83,8 @@ export function updateSheepies(carPosition: Vector3, cleanupPosition: Vector3, {
         }
     }
 }
-export function farthestAirborneSheep(): Sheepie | null {
+
+export function farthestAirborneSheep(sheepies: Sheepie[]): Sheepie | null {
     let farthest = null;
     for (const sheep of sheepies) {
         if (sheep.isDynamic && (farthest === null || sheep.mesh.position.z < farthest.mesh.position.z)) {
