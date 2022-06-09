@@ -1,4 +1,4 @@
-import { Mesh, Object3D, Scene, Vector3 } from "three";
+import { Object3D, Scene, Vector3 } from "three";
 import { randFloat, randFloatSpread } from "three/src/math/MathUtils";
 import { loadModel } from "./loadModel";
 import { createParticles } from "./smoke";

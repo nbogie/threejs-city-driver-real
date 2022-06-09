@@ -1,4 +1,4 @@
-import { Object3D } from "three"
+import { Object3D } from "three";
 
 /** Given an Object3D (e.g. a mesh, or a group), report its hierarchy of children,
  *  if any, to the console.  */

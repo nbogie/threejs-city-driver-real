@@ -1,5 +1,5 @@
+import { BoxGeometry, BufferGeometry, Material, Mesh, MeshBasicMaterial, MeshLambertMaterial, Scene, Vector3 } from "three";
 import { randFloat } from 'three/src/math/MathUtils';
-import { Mesh, BoxGeometry, MeshLambertMaterial, Vector3, Scene, MeshBasicMaterial, BufferGeometry, Material } from "three";
 import { randomColour } from "./colours";
 import { pick } from "./randomUtils";
 

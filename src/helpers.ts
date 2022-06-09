@@ -1,4 +1,4 @@
-import { Scene, AxesHelper, GridHelper } from "three";
+import { AxesHelper, GridHelper, Scene } from "three";
 
 export function setupHelpers(scene: Scene): { axesHelper: AxesHelper, gridHelper: GridHelper } {
     const axesHelper = new AxesHelper(5);
