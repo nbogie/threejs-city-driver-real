@@ -1,14 +1,24 @@
 import { AmbientLight, DirectionalLight, Scene } from "three";
 
-export function setupLights(scene: Scene): void {
-    const directionalLight1 = new DirectionalLight();
-    directionalLight1.position.set(-2, 3, 2);
-    scene.add(directionalLight1);
 
-    const directionalLight2 = new DirectionalLight();
-    directionalLight2.position.set(-5, 2, -2);
-    scene.add(directionalLight2);
+export function makeLightsAndAddToScene(scene: Scene): { ambLight: AmbientLight; light: DirectionalLight; lowLight: DirectionalLight; } {
+    const light = new DirectionalLight(0xFFA050);
+    light.position.set(2, 2, 100);
 
-    const ambLight = new AmbientLight(0x604040); // soft white light from everywhere
+    const lowLight = new DirectionalLight(0x0060FF);
+    lowLight.position.set(1, -2, -3);
+
+    const ambLight = new AmbientLight(0xffffff, 0.3);
+
     scene.add(ambLight);
+    scene.add(light);
+    scene.add(lowLight);
+
+    return {
+        ambLight,
+        light,
+        lowLight
+    };
+    // scene.add(new THREE.DirectionalLightHelper(light, 5))
+    // scene.add(new THREE.DirectionalLightHelper(lowLight, 5));
 }
