@@ -2,15 +2,13 @@
 //Prefer instead something like https://github.com/mattdesl/canvas-sketch-util
 
 import { Vector3 } from "three";
+import { randFloatSpread } from "three/src/math/MathUtils";
 
 
 export function randomPosition(): Vector3 {
-    return new Vector3(rand(-10, 10), rand(-10, 10), rand(-10, 10));
+    return new Vector3(randFloatSpread(20), randFloatSpread(20), randFloatSpread(20));
 }
 
-export function rand(min: number, max: number): number {
-    return min + Math.random() * (max - min);
-}
 
 export function polarToCartesian(radius: number, angle: number): { x: number, y: number } {
     const x = radius * Math.cos(angle);

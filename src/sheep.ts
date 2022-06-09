@@ -1,7 +1,7 @@
 import { Object3D, Scene, Vector3 } from "three";
+import { randFloat, randFloatSpread } from "three/src/math/MathUtils";
 import { loadModel } from "./loadModel";
 import { createParticles } from "./smoke";
-import { rand } from "./util";
 
 // this tab copied from https://www.openprocessing.org/sketch/1028620
 const sheepies: Sheepie[] = [];
@@ -106,16 +106,16 @@ export function hitSheep(sheep: Sheepie, {
 
     setPartsVisibility(config, sheep.mesh);
 
-    sheep.hue = rand(0, 360);
+    sheep.hue = randFloat(0, 360);
 
     //pop up into the air a little
     sheep.mesh.position.y += 2;
     //assume awkward rotation (we will not spin during flight)
-    sheep.mesh.rotation.z = Math.random() * Math.PI;
-    sheep.mesh.rotation.x = Math.random() * Math.PI;
+    sheep.mesh.rotation.z = randFloat(0, 2 * Math.PI);
+    sheep.mesh.rotation.x = randFloat(0, 2 * Math.PI);
     //prepare for take-off...
     sheep.isDynamic = true;
-    sheep.velocity.set(rand(-1, 1), rand(1, 4), rand(-2, -3));
+    sheep.velocity.set(randFloat(-1, 1), randFloat(1, 4), randFloat(-2, -3));
     //todo: use the car's velocity and positioning to allow skill-booping the sheep into outer space / onto targets
 
     shakeCamera(2); //todo: shake according to sheep size?  e.g. sheep.mesh.scale.x ?
@@ -127,12 +127,12 @@ export function respawnSheep(sheep: Sheepie, playerPos: Vector3): void {
     sheep.velocity.set(0, 0, 0);
 
     resetSheepMesh(sheep.mesh);
-    sheep.mesh.position.z = playerPos.z - rand(200, 300);
+    sheep.mesh.position.z = playerPos.z - randFloat(200, 300);
 }
 
 type PartsVisibilities = [string, boolean][]
 export function resetSheepMesh(mesh: Object3D): void {
-    const scale = rand(1.5, 2.5);
+    const scale = randFloat(1.5, 2.5);
     mesh.scale.set(scale, scale, scale);
     //this model has optional parts - two sets of eyes and legs for state. (*should really be done as an animation in gltf...)
 
@@ -146,7 +146,7 @@ export function resetSheepMesh(mesh: Object3D): void {
     setPartsVisibility(config, mesh);
     mesh.position.copy(randomSheepPosition());
     mesh.rotation.set(0, 0, 0);
-    mesh.rotation.y = rand(-1, 1) * Math.PI / 4;
+    mesh.rotation.y = randFloatSpread(2) * Math.PI / 4;
 
 }
 
@@ -162,5 +162,5 @@ function setPartsVisibility(config: PartsVisibilities, mesh: Object3D) {
 
 
 export function randomSheepPosition(): Vector3 {
-    return new Vector3(rand(-1, 1) * 6, 0, rand(-300, 0));
+    return new Vector3(randFloatSpread(2) * 6, 0, randFloat(-300, 0));
 }

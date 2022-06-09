@@ -1,10 +1,9 @@
 import { BoxGeometry, MeshLambertMaterial, Mesh, Vector3, Group, Scene } from "three";
-import { lerp, mapLinear } from "three/src/math/MathUtils";
+import { lerp, mapLinear, randFloatSpread } from "three/src/math/MathUtils";
 import { randomColour } from "./colours";
 import { loadModel } from "./loadModel";
 import { Mouse } from "./mouse";
 import { emitSmokeParticle } from "./smoke";
-import { rand } from "./util";
 
 let dragsterModel: Group | null;
 const carMaxSpeed = 1.1;
@@ -85,7 +84,7 @@ export function updateCar(mouse: Mouse, myVehicle: Car, scene: Scene): void {
         myVehicle.mesh.rotation.y = Math.PI + rollAngle;
 
         if (isBraking && myVehicle.vel.length() > 0.2) {
-            emitSmokeParticle(scene, dragsterModel, rand(-1, 1), true);
+            emitSmokeParticle(scene, dragsterModel, randFloatSpread(2), true);
         }
         // wheels rotation
 

@@ -1,8 +1,8 @@
 import { Camera, Mesh, PerspectiveCamera, Vector3 } from "three";
+import { randFloatSpread } from "three/src/math/MathUtils";
 import { pick } from "./randomUtils";
 import { getAspect } from "./setupRenderer";
 import { farthestAirborneSheep } from "./sheep";
-import { rand } from "./util";
 import { Car } from "./vehicle";
 
 export function setupCamera(dim: { w: number, h: number }): PerspectiveCamera {
@@ -75,7 +75,7 @@ export function updateBoringChaseCam(targetMesh: Mesh, cam: Camera, shakeAmount:
 
     cam.lookAt(targetPosition);
 
-    const shake = rand(-0.1, 0.1) * shakeAmount;
+    const shake = randFloatSpread(0.2) * shakeAmount;
     cam.position.x += shake;
 
 }

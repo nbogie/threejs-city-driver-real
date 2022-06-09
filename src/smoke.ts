@@ -1,5 +1,5 @@
 import { BoxGeometry, Color, Group, Mesh, MeshLambertMaterial, Scene, Vector3 } from "three";
-import { rand } from "./util";
+import { randFloat, randFloatSpread } from "three/src/math/MathUtils";
 
 let particles: Mesh[] = [];
 
@@ -39,7 +39,7 @@ export function createParticles(scene: Scene, position: Vector3, numOfParticles:
 
 
 export function createParticle(position: Vector3, hue: number | null = null): Mesh {
-    const size = rand(0.05, 0.5);
+    const size = randFloat(0.05, 0.5);
     const geometry = particleGeometryShared;
 
     //TODO: reuse this material
@@ -55,15 +55,15 @@ export function createParticle(position: Vector3, hue: number | null = null): Me
     const mesh = new Mesh(geometry, material);
     mesh.scale.set(size, size, size);
     const pos = position.clone();
-    pos.z += rand(0, 2);
+    pos.z += randFloat(0, 2);
 
     mesh.position.copy(pos);
-    mesh.rotation.x = Math.random() * Math.PI * 2;
-    mesh.rotation.y = Math.random() * Math.PI * 2;
+    mesh.rotation.x = randFloat(0, Math.PI * 2);
+    mesh.rotation.y = randFloat(0, Math.PI * 2);
     //TODO: put these on userData
-    mesh.userData.life = rand(40, 70);
-    mesh.userData.rotationSpeedX = rand(-0.03, 0.03);
-    mesh.userData.rotationSpeedY = rand(-0.03, 0.03);
+    mesh.userData.life = randFloat(40, 70);
+    mesh.userData.rotationSpeedX = randFloatSpread(0.06);
+    mesh.userData.rotationSpeedY = randFloatSpread(0.06);
 
     return mesh;
 }

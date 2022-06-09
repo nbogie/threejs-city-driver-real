@@ -1,7 +1,7 @@
+import { randFloat } from 'three/src/math/MathUtils';
 import { Mesh, BoxGeometry, MeshLambertMaterial, Vector3, Scene, MeshBasicMaterial } from "three";
 import { randomColour } from "./colours";
 import { pick } from "./randomUtils";
-import { rand } from "./util";
 
 
 const buildings: Mesh[] = [];
@@ -66,11 +66,11 @@ export function updateBuildings(carPos: Vector3): void {
 }
 
 export function createBuilding(): Mesh {
-    const height = rand(2, 20);
+    const height = randFloat(2, 20);
     // TODO reuse box' geometry for all buildings
-    const geometry = new BoxGeometry(rand(1, 4),
+    const geometry = new BoxGeometry(randFloat(1, 4),
         height,
-        rand(1, 4));
+        randFloat(1, 4));
     // make the geometry's origin be the building's base.
     // not its centre (which is default)
     geometry.translate(0, height / 2, 0);
@@ -80,13 +80,13 @@ export function createBuilding(): Mesh {
 
     const mesh = new Mesh(geometry, material);
 
-    const x = pick([-1, 1]) * rand(6, 30);
-    const z = rand(10, -300);
+    const x = pick([-1, 1]) * randFloat(6, 30);
+    const z = randFloat(10, -300);
 
     const pos = new Vector3(x, 0, z);
 
     mesh.position.copy(pos);
-    // mesh.scale.set(rand(0.3, 1.2), rand(0.3, 1.2), rand(0.3, 1.2));
+    // mesh.scale.set(randFloat(0.3, 1.2), randFloat(0.3, 1.2), randFloat(0.3, 1.2));
     return mesh;
 }
 
