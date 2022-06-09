@@ -1,4 +1,4 @@
-import { BoxGeometry, Color, Group, Mesh, MeshLambertMaterial, Scene, Vector3 } from "three";
+import { BoxGeometry, Color, Group, Mesh, MeshBasicMaterial, MeshLambertMaterial, Scene, Vector3 } from "three";
 import { randFloat, randFloatSpread } from "three/src/math/MathUtils";
 import { removeObjectFromScene } from "./util";
 import { getWheelFor } from "./vehicle";
@@ -44,12 +44,13 @@ export function createParticles(scene: Scene, position: Vector3, numOfParticles:
 export function createParticle(position: Vector3, hue: number | null = null): ParticleMesh {
     const size = randFloat(0.05, 0.5);
     const geometry = particleGeometryShared;
-
+    const isDustTrail = hue === null;
     //TODO: reuse this material
-    const colour = hue === null ? 0xffffff : new Color(`hsl(${hue}, 100%, 50%)`);
-    const opacity = hue === null ? 0.6 : 1;
-    const transparent = hue === null;
-    const material = new MeshLambertMaterial({
+    const colour = isDustTrail ? 0xffffff : new Color(`hsl(${hue}, 100%, 50%)`);
+    const opacity = isDustTrail ? 0.6 : 1;
+    const transparent = true
+    const matConstructor = isDustTrail ? MeshLambertMaterial : MeshBasicMaterial;
+    const material = new matConstructor({
         color: colour,
         opacity,
         transparent
