@@ -16,8 +16,8 @@ export function setupEffectComposer(
 
     //Define (but do not yet apply) a bloom effect (a glow/blur effect)
     const bloomPass = new UnrealBloomPass(new Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-    bloomPass.threshold = 0;
-    bloomPass.strength = 1.5
+    bloomPass.threshold = 0.8;
+    bloomPass.strength = 0.5
     bloomPass.radius = 0;
 
     //Compose a simple pipeline - our basic render then pass it through the bloom effect
