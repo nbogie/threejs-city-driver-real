@@ -1,9 +1,3 @@
-//my openprocessing sketches
-// 1020500 threejs-start: https://openprocessing.org/sketch/1020500
-// 1028620 threejs adding obstacles: https://openprocessing.org/sketch/1028620
-// 1031685 threejs rainbow trails: https://openprocessing.org/sketch/1031685
-// 1020528 gintaras added sound, diff camera angle: https://openprocessing.org/sketch/1020528
-
 import { Mesh, Scene } from 'three';
 import { CamConfig, cycleCameras, setupCamera, updateCamera } from './camera';
 import { createCity, createGroundPlane, createRoad, createRoadStripes, recycleBuildings, recycleRoadStripes, updateBuildings } from './city';
