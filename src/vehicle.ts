@@ -14,6 +14,7 @@ export interface Car {
     acc: Vector3;
     availableAccel: number;
 }
+
 export function createVehicle(): Car {
     const geometry = new BoxGeometry(1, 0.5, 3);
 
@@ -41,9 +42,6 @@ export async function loadCarModel(scene: Scene): Promise<void> {
     dragsterModel.rotation.y = Math.PI;
     scene.add(dragsterModel);
 }
-
-
-
 
 export function updateCar(mouse: Mouse, myVehicle: Car, scene: Scene): void {
     const isAccelerating = mouse.leftButtonDown && !mouse.rightButtonDown;

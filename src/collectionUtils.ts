@@ -4,7 +4,6 @@
  * @param n number of items to create
  * @param creationFunction function to call, n times
  * @returns array of n items
- 
  */
 export function collect<T>(n: number, creationFunction: (n: number) => T): T[] {
     const arr = [];

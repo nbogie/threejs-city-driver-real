@@ -5,12 +5,14 @@ import { createParticles } from "./smoke";
 
 // this tab copied from https://www.openprocessing.org/sketch/1028620
 const sheepies: Sheepie[] = [];
-interface Sheepie {
+
+export interface Sheepie {
     mesh: Object3D,
     velocity: Vector3,
     isDynamic: boolean,
     hue: number
 }
+
 export async function createSheepies(scene: Scene): Promise<void> {
     //todo: i think we should use Instanced mesh to share the geometry across all sheep meshes
     //https://threejs.org/docs/#api/en/objects/InstancedMesh
@@ -121,7 +123,6 @@ export function hitSheep(sheep: Sheepie, {
     shakeCamera(2); //todo: shake according to sheep size?  e.g. sheep.mesh.scale.x ?
 }
 
-
 export function respawnSheep(sheep: Sheepie, playerPos: Vector3): void {
     sheep.isDynamic = false;
     sheep.velocity.set(0, 0, 0);
@@ -130,7 +131,6 @@ export function respawnSheep(sheep: Sheepie, playerPos: Vector3): void {
     sheep.mesh.position.z = playerPos.z - randFloat(200, 300);
 }
 
-type PartsVisibilities = [string, boolean][]
 export function resetSheepMesh(mesh: Object3D): void {
     const scale = randFloat(1.5, 2.5);
     mesh.scale.set(scale, scale, scale);
@@ -150,6 +150,7 @@ export function resetSheepMesh(mesh: Object3D): void {
 
 }
 
+type PartsVisibilities = [string, boolean][]
 function setPartsVisibility(config: PartsVisibilities, mesh: Object3D) {
     for (const [partName, visibility] of config) {
         const part = mesh.getObjectByName(partName);
@@ -159,7 +160,6 @@ function setPartsVisibility(config: PartsVisibilities, mesh: Object3D) {
     }
 
 }
-
 
 export function randomSheepPosition(): Vector3 {
     return new Vector3(randFloatSpread(2) * 6, 0, randFloat(-300, 0));

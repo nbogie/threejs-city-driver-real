@@ -11,7 +11,6 @@ let particles: Mesh[] = [];
 //shared with ALL particles.  Performance optimisation.
 const particleGeometryShared = new BoxGeometry(1, 1, 1);
 
-
 export function emitSmokeParticle(scene: Scene, model: Group, deltaX: number, isFront: boolean): void {
     const isLeftWheel = deltaX > 0;
     //TODO: inefficient.  store these object references when car loaded.
@@ -36,7 +35,6 @@ export function createParticles(scene: Scene, position: Vector3, numOfParticles:
         particles.push(particle);
     }
 }
-
 
 export function createParticle(position: Vector3, hue: number | null = null): Mesh {
     const size = randFloat(0.05, 0.5);

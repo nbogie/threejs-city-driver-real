@@ -5,18 +5,20 @@ import { getAspect } from "./setupRenderer";
 import { farthestAirborneSheep } from "./sheep";
 import { Car } from "./vehicle";
 
-export function setupCamera(dim: { w: number, h: number }): PerspectiveCamera {
-    const camera: PerspectiveCamera = new PerspectiveCamera(75, getAspect(dim), 1, 10000);
-    camera.position.set(7, 6, 10);
-    return camera;
-}
 export interface Pedestrian {
     pos: Vector3 | null;
 }
+
 export interface CamConfig {
     camNumber: number;
     pedestrian: Pedestrian;
     shakeAmount: number;
+}
+//TO-DO: check old and new params for setting up camera
+export function setupCamera(dim: { w: number, h: number }): PerspectiveCamera {
+    const camera: PerspectiveCamera = new PerspectiveCamera(75, getAspect(dim), 1, 10000);
+    camera.position.set(7, 6, 10);
+    return camera;
 }
 
 export function cycleCameras(camConfig: CamConfig): void {

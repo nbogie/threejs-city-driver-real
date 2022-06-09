@@ -57,11 +57,6 @@ export function setupThreeJSScene(): void {
         }
     }
 
-    //don't trigger right-mouse-button context menu
-    document.oncontextmenu = function () {
-        return false;
-    }
-
     function handleKeyDown(e: KeyboardEvent) {
         if (e.key === 'c' || e.key === 'C') {
             cycleCameras(camConfig);
@@ -112,11 +107,11 @@ export function setupThreeJSScene(): void {
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
 
-    // const controls = new OrbitControls(camera, renderer.domElement);
-    //controls.update() must be called after any manual changes to the camera's transform
 
-    // controls.update();
-
+    //don't trigger right-mouse-button context menu
+    document.oncontextmenu = function () {
+        return false;
+    }
 
     const myVehicle: Car = createVehicle();
     loadCarModel(scene);
@@ -130,9 +125,7 @@ export function setupThreeJSScene(): void {
     scene.add(ground);
 
     const skyColourTwo = new Color('skyblue');
-    const {
-        ambLight
-    } = makeLightsAndAddToScene(scene);
+    const { ambLight } = makeLightsAndAddToScene(scene);
 
     let frameCount = 1;
 
@@ -173,8 +166,6 @@ export function setupThreeJSScene(): void {
     }
 
 }
-
-
 
 setupThreeJSScene();
 
