@@ -1,5 +1,6 @@
 import { BoxGeometry, Color, Group, Mesh, MeshLambertMaterial, Scene, Vector3 } from "three";
 import { randFloat, randFloatSpread } from "three/src/math/MathUtils";
+import { removeObjectFromScene } from "./util";
 
 let particles: Mesh[] = [];
 
@@ -78,14 +79,9 @@ export function updateSmokeParticles(): void {
 }
 
 export function deleteSmokeParticles(scene: Scene): void {
+    //TODO: use pool of particles
     const particlesToRemove = particles.filter(p => p.userData.life <= 0);
     particlesToRemove.forEach(p => removeObjectFromScene(p, scene));
 
     particles = particles.filter(p => p.userData.life > 0);
-}
-
-export function removeObjectFromScene(object: Mesh, scene: Scene): void {
-    object.geometry.dispose();
-    (Array.isArray(object.material) ? object.material : [object.material]).map(m => m.dispose());
-    scene.remove(object);
 }
