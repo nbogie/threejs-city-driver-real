@@ -122,6 +122,7 @@ export async function setupThreeJSScene(): Promise<void> {
 
         renderer.render(scene, camera);
 
+        // document.getElementById("info")!.innerText = "mouse: " + mouse.x.toFixed(2) + ", " + mouse.y.toFixed(2);
         requestAnimationFrame(renderAndUpdateWorld);
 
         frameCount += 1;
