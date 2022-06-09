@@ -1,0 +1,56 @@
+{
+  "name": "threejs-ts-starter",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "CC-BY-NC-ND-4.0",
+  "dependencies": {
+    "cannon-es": "^0.19.0",
+    "parcel-plugin-static-files-copy": "^2.6.0",
+    "three": "^0.140.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.3",
+    "@babel/preset-env": "^7.14.4",
+    "@babel/preset-typescript": "^7.13.0",
+    "@types/jest": "^26.0.23",
+    "@types/three": "^0.140.0",
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "babel-jest": "^27.0.2",
+    "eslint": "^7.28.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "jest": "^27.0.4",
+    "parcel-bundler": "^1.12.5",
+    "prettier": "^2.3.1",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.2"
+  },
+  "scripts": {
+    "start": "yarn run clean && parcel src/index.html",
+    "build": "yarn run clean && parcel build src/index.html --public-url ./",
+    "clean": "rimraf ./dist ./.cache",
+    "lint": "eslint src",
+    "format": "prettier --write src",
+    "format:check": "prettier --check src",
+    "test": "jest",
+    "test:watch": "jest --watchAll",
+    "type-check": "tsc --noEmit"
+  },
+  "staticFiles": {
+    "staticPath": [
+      {
+        "staticPath": "assets",
+        "staticOutDir": "assets"
+      }
+    ]
+  },
+  "browserslist": [
+    "last 3 and_chr versions",
+    "last 3 chrome versions",
+    "last 3 opera versions",
+    "last 3 ios_saf versions",
+    "last 3 safari versions"
+  ]
+}
