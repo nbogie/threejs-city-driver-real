@@ -5,12 +5,11 @@
 // 1020528 gintaras added sound, diff camera angle: https://openprocessing.org/sketch/1020528
 
 import { Mesh, Scene } from 'three';
-import { mapLinear } from 'three/src/math/MathUtils';
 import { CamConfig, cycleCameras, setupCamera, updateCamera } from './camera';
 import { createCity, createGroundPlane, createRoad, createRoadStripes, recycleBuildings, recycleRoadStripes, updateBuildings } from './city';
 import { setupHelpers } from './helpers';
 import { makeLightsAndAddToScene, updateLightsAndSky } from './lights';
-import { Mouse } from './mouse';
+import { setupMouse } from './mouse';
 import { setupRenderer } from './renderer';
 import { createSheepies, Sheepie, updateSheepies } from './sheep';
 import { deleteSmokeParticles, updateSmokeParticles } from './smoke';
@@ -32,28 +31,6 @@ export async function setupThreeJSScene(): Promise<void> {
 
     const { axesHelper, gridHelper } = setupHelpers(scene);
 
-    function handleMouseMove(event: MouseEvent) {
-        mouse.y = mapLinear(event.clientY, 0, window.innerHeight, -0.5, 0.5);
-        mouse.x = mapLinear(event.clientX, 0, window.innerWidth, -0.5, 0.5);
-    }
-
-    function handleMouseDown(ev: MouseEvent) {
-        if (ev.button === 0) {
-            mouse.leftButtonDown = true;
-        }
-        if (ev.button === 2) {
-            mouse.rightButtonDown = true;
-        }
-    }
-
-    function handleMouseUp(ev: MouseEvent) {
-        if (ev.button === 0) {
-            mouse.leftButtonDown = false;
-        }
-        if (ev.button === 2) {
-            mouse.rightButtonDown = false;
-        }
-    }
 
     function handleKeyDown(e: KeyboardEvent) {
         if (e.key === 'c' || e.key === 'C') {
@@ -86,12 +63,7 @@ export async function setupThreeJSScene(): Promise<void> {
         }
     }
 
-    const mouse: Mouse = {
-        x: 0,
-        y: 0,
-        leftButtonDown: false,
-        rightButtonDown: false
-    }
+    const mouse = setupMouse(renderer.domElement);
 
     const camConfig: CamConfig = {
         camNumber: 2,
@@ -101,17 +73,9 @@ export async function setupThreeJSScene(): Promise<void> {
         shakeAmount: 0
     };
 
-    renderer.domElement.addEventListener('mousemove', handleMouseMove);
     // not sure why we can't add this listener to the canvas
     window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mouseup', handleMouseUp);
 
-
-    //don't trigger right-mouse-button context menu
-    document.oncontextmenu = function () {
-        return false;
-    }
 
     const myVehicle: Car = await createVehicle(scene);
     loadSounds();
