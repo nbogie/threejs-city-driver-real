@@ -63,6 +63,9 @@ export async function setupThreeJSScene(): Promise<void> {
             axesHelper.visible = !axesHelper.visible;
             gridHelper.visible = !gridHelper.visible;
         }
+        if (e.key === 'f') {
+            myVehicle.isFlying = !myVehicle.isFlying;
+        }
     }
 
     function updateHelpers(myVehicle: Car) {

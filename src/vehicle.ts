@@ -58,7 +58,7 @@ export function updateCar(mouse: Mouse, myVehicle: Car, scene: Scene): void {
     myVehicle.mesh.position.add(myVehicle.vel);
 
     const desiredCarX = mapLinear(mouse.x, -0.5, 0.5, -3, 3);
-    const desiredCarY = myVehicle.isFlying ? mapLinear(mouse.y, -0.5, 0.5, 5, 0) : 0;
+    const desiredCarY = myVehicle.isFlying ? mapLinear(mouse.y, -0.5, 0.5, 8, 0) : 0;
     myVehicle.mesh.position.x = lerp(myVehicle.mesh.position.x, desiredCarX, 0.1);
     myVehicle.mesh.position.y = lerp(myVehicle.mesh.position.y, desiredCarY, 0.1);
 
