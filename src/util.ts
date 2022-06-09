@@ -1,7 +1,7 @@
 //These are not good, just temporary.
 //Prefer instead something like https://github.com/mattdesl/canvas-sketch-util
 
-import { Mesh } from "three";
+import { Mesh, Scene } from "three";
 
 
 /** Convert given position from radius and angle form to {x, y} coordinates. */
