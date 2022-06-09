@@ -2,7 +2,15 @@ import { BoxGeometry, Color, Group, Mesh, MeshLambertMaterial, Scene, Vector3 } 
 import { randFloat, randFloatSpread } from "three/src/math/MathUtils";
 import { removeObjectFromScene } from "./util";
 
-let particles: Mesh[] = [];
+let particles: ParticleMesh[] = [];
+interface ParticleUserData {
+    life: number;
+    rotationSpeedX: number;
+    rotationSpeedY: number;
+}
+interface ParticleMesh extends Mesh {
+    userData: ParticleUserData;
+}
 
 // interface Particle {
 //     life: number;
@@ -31,13 +39,13 @@ export function emitSmokeParticle(scene: Scene, carModel: Group, deltaX: number,
 
 export function createParticles(scene: Scene, position: Vector3, numOfParticles: number, hue: number | null = null): void {
     for (let i = 0; i < numOfParticles; i++) {
-        const particle = createParticle(position, hue);
+        const particle: ParticleMesh = createParticle(position, hue);
         scene.add(particle);
         particles.push(particle);
     }
 }
 
-export function createParticle(position: Vector3, hue: number | null = null): Mesh {
+export function createParticle(position: Vector3, hue: number | null = null): ParticleMesh {
     const size = randFloat(0.05, 0.5);
     const geometry = particleGeometryShared;
 
@@ -59,11 +67,14 @@ export function createParticle(position: Vector3, hue: number | null = null): Me
     mesh.position.copy(pos);
     mesh.rotation.x = randFloat(0, Math.PI * 2);
     mesh.rotation.y = randFloat(0, Math.PI * 2);
-    mesh.userData.life = randFloat(40, 70);
-    mesh.userData.rotationSpeedX = randFloatSpread(0.06);
-    mesh.userData.rotationSpeedY = randFloatSpread(0.06);
 
-    return mesh;
+    //TODO: do better!  Pushing through `unknown` gives us no checks of what's gone before.
+    const particleMesh = mesh as unknown as ParticleMesh;
+    particleMesh.userData.life = randFloat(40, 70);
+    particleMesh.userData.rotationSpeedX = randFloatSpread(0.06);
+    particleMesh.userData.rotationSpeedY = randFloatSpread(0.06);
+
+    return particleMesh;
 }
 
 export function updateSmokeParticles(): void {
