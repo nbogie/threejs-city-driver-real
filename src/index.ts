@@ -4,6 +4,7 @@ import { createCity, createGroundPlane, createRoad, createRoadStripes, recycleBu
 import { setupHelpers } from './helpers';
 import { makeLightsAndAddToScene, updateLightsAndSky } from './lights';
 import { setupMouse } from './mouse';
+import { setupEffectComposer } from './postProcessing';
 import { setupRenderer } from './renderer';
 import { createSheepies, Sheepie, updateSheepies } from './sheep';
 import { deleteSmokeParticles, updateSmokeParticles } from './smoke';
@@ -23,8 +24,9 @@ export async function setupThreeJSScene(): Promise<void> {
 
     const renderer = setupRenderer(camera, dimensions);
 
+    const effectComposer = setupEffectComposer(camera, renderer, scene);
     const { axesHelper, gridHelper } = setupHelpers(scene);
-
+    let isPostProcessingEnabled = false;
 
     function handleKeyDown(e: KeyboardEvent) {
         if (e.key === 'c' || e.key === 'C') {
@@ -36,6 +38,9 @@ export async function setupThreeJSScene(): Promise<void> {
         }
         if (e.key === 'f') {
             myVehicle.isFlying = !myVehicle.isFlying;
+        }
+        if (e.key === "p") {
+            isPostProcessingEnabled = !isPostProcessingEnabled;
         }
     }
 
@@ -113,8 +118,11 @@ export async function setupThreeJSScene(): Promise<void> {
 
         dampenShake();
         stats.update();
-
-        renderer.render(scene, camera);
+        if (isPostProcessingEnabled) {
+            effectComposer.render()
+        } else {
+            renderer.render(scene, camera);
+        }
 
         // document.getElementById("info")!.innerText = "mouse: " + mouse.x.toFixed(2) + ", " + mouse.y.toFixed(2);
         requestAnimationFrame(renderAndUpdateWorld);
