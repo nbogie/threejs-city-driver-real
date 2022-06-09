@@ -45,6 +45,8 @@ export async function loadCarModel(scene: Scene): Promise<Group> {
         backLeft: getChildObjectByNameOrFail(carModel, "wheel_bl"),
         backRight: getChildObjectByNameOrFail(carModel, "wheel_br"),
     }
+    carModel.userData.wheels = wheels;
+
     function getChildObjectByNameOrFail(parent: Group, partName: string): Object3D {
         const part = parent.getObjectByName(partName);
         if (!part) {
@@ -52,7 +54,6 @@ export async function loadCarModel(scene: Scene): Promise<Group> {
         }
         return part;
     }
-    carModel.userData.wheels = wheels;
 
     return carModel;
 }
@@ -99,8 +100,7 @@ export function updateCar(mouse: Mouse, myVehicle: Car, scene: Scene): void {
 
     //todo: this shouldbe calculated based on circumference of wheel, and current speed
     const wheelAngle = mapLinear(myVehicle.vel.z, -carMaxSpeed, 0, Math.PI / 3, 0);
-    const wheels: Object3D[] = Object.values(dragsterModel.userData.wheels)
-
+    const wheels: Object3D[] = getAllWheels(dragsterModel);
     for (const wheel of wheels) {
         wheel.rotation.x += wheelAngle
     }
@@ -110,4 +110,19 @@ export function updateCar(mouse: Mouse, myVehicle: Car, scene: Scene): void {
         // it should emit particles from the outside wheel
         emitSmokeParticle(scene, dragsterModel, deltaX, false);
     }
+}
+
+export function getWheelFor(carModel: Group, isLeftWheel: boolean, isFrontWheel: boolean): Object3D {
+    const wheelIndex: WheelIndex = isLeftWheel ? (isFrontWheel ? "frontLeft" : "backLeft") : (isFrontWheel ? "frontRight" : "backRight")
+    return getWheelByIndex(carModel, wheelIndex);
+}
+
+export function getWheelByIndex(carModel: Group, wheelIndex: WheelIndex): Object3D {
+    const wheel = carModel.userData.wheels[wheelIndex]
+    console.assert(wheel, "Should be able to find wheel with index: " + wheelIndex)
+    return wheel;
+}
+
+function getAllWheels(dragsterModel: Group): Object3D[] {
+    return Object.values(dragsterModel.userData.wheels)
 }

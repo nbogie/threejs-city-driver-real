@@ -1,7 +1,7 @@
 import { BoxGeometry, Color, Group, Mesh, MeshLambertMaterial, Scene, Vector3 } from "three";
 import { randFloat, randFloatSpread } from "three/src/math/MathUtils";
 import { removeObjectFromScene } from "./util";
-import { WheelIndex } from "./vehicle";
+import { getWheelFor } from "./vehicle";
 
 let particles: ParticleMesh[] = [];
 interface ParticleUserData {
@@ -21,15 +21,12 @@ interface ParticleMesh extends Mesh {
 //shared with ALL particles.  Performance optimisation.
 const particleGeometryShared = new BoxGeometry(1, 1, 1);
 
-export function emitSmokeParticle(scene: Scene, carModel: Group, deltaX: number, isFront: boolean): void {
+export function emitSmokeParticle(scene: Scene, carModel: Group, deltaX: number, isFrontWheel: boolean): void {
     const isLeftWheel = deltaX > 0;
-    const wheelIndex: WheelIndex = isLeftWheel ? (isFront ? "frontLeft" : "backLeft") : (isFront ? "backLeft" : "backRight")
-
-    const wheel = carModel.userData.wheels[wheelIndex]
-    console.assert(wheel, "Should be able to find wheel with index: " + wheelIndex)
+    const wheel = getWheelFor(carModel, isLeftWheel, isFrontWheel);
     const wheelWorldPos = new Vector3(0, 0, 0);
     wheel.getWorldPosition(wheelWorldPos)
-    if (!isFront) {
+    if (!isFrontWheel) {
         wheelWorldPos.z += 0.5;
     }
     createParticles(scene, wheelWorldPos, 3);
