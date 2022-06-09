@@ -18,7 +18,7 @@ import { loadSounds } from './sound';
 import { setupStatsPanel } from './statsPanel';
 import { Car, createVehicle, loadCarModel, updateCar } from './vehicle';
 
-export function setupThreeJSScene(): void {
+export async function setupThreeJSScene(): Promise<void> {
 
     const scene = new Scene();
 
@@ -110,8 +110,7 @@ export function setupThreeJSScene(): void {
         return false;
     }
 
-    const myVehicle: Car = createVehicle();
-    loadCarModel(scene);
+    const myVehicle: Car = await createVehicle(scene);
     loadSounds();
 
     const buildings: Mesh[] = createCity(scene, 200);

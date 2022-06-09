@@ -5,7 +5,6 @@ import { loadModel } from "./loadModel";
 import { Mouse } from "./mouse";
 import { emitSmokeParticle } from "./smoke";
 
-let dragsterModel: Group | null;
 const carMaxSpeed = 1.1;
 
 export interface Car {
@@ -13,9 +12,10 @@ export interface Car {
     vel: Vector3;
     acc: Vector3;
     availableAccel: number;
+    dragsterModel: Group;
 }
 
-export function createVehicle(): Car {
+export async function createVehicle(scene: Scene): Promise<Car> {
     const geometry = new BoxGeometry(1, 0.5, 3);
 
     const material = new MeshLambertMaterial({
@@ -23,24 +23,27 @@ export function createVehicle(): Car {
     });
 
     const mesh = new Mesh(geometry, material);
+    const dragsterModel = await loadCarModel(scene);
 
     const car = {
         mesh,
         vel: new Vector3(0, 0, -carMaxSpeed),
         availableAccel: 0.2,
         acc: new Vector3(0, 0, 0),
+        dragsterModel
     }
     return car;
 }
 
-export async function loadCarModel(scene: Scene): Promise<void> {
-
-    dragsterModel = await loadModel("./assets/dragster.glb")
+export async function loadCarModel(scene: Scene): Promise<Group> {
+    const url = "./assets/dragster.glb";
+    const dragsterModel = await loadModel(url)
     if (!dragsterModel) {
-        throw new Error("error loading dragster model");
+        throw new Error("error loading dragster model  from " + url);
     }
     dragsterModel.rotation.y = Math.PI;
     scene.add(dragsterModel);
+    return dragsterModel;
 }
 
 export function updateCar(mouse: Mouse, myVehicle: Car, scene: Scene): void {
@@ -72,33 +75,34 @@ export function updateCar(mouse: Mouse, myVehicle: Car, scene: Scene): void {
     const rollAngle = mapLinear(deltaX, -6, 6, Math.PI / 6, -Math.PI / 6);
     const yawAngle = Math.PI + rollAngle;
     const pitchAngle = mapLinear(myVehicle.acc.z, 0.2, -0.2, -1, 1) * Math.PI / 16;
-    if (dragsterModel) {
-        dragsterModel.position.copy(myVehicle.mesh.position);
+    const dragsterModel = myVehicle.dragsterModel;
 
-        dragsterModel.rotation.z = rollAngle;
-        dragsterModel.rotation.y = yawAngle;
-        dragsterModel.rotation.x = pitchAngle;
-        myVehicle.mesh.rotation.z = rollAngle;
-        myVehicle.mesh.rotation.y = Math.PI + rollAngle;
+    dragsterModel.position.copy(myVehicle.mesh.position);
 
-        if (isBraking && myVehicle.vel.length() > 0.2) {
-            emitSmokeParticle(scene, dragsterModel, randFloatSpread(2), true);
-        }
-        // wheels rotation
+    dragsterModel.rotation.z = rollAngle;
+    dragsterModel.rotation.y = yawAngle;
+    dragsterModel.rotation.x = pitchAngle;
+    myVehicle.mesh.rotation.z = rollAngle;
+    myVehicle.mesh.rotation.y = Math.PI + rollAngle;
 
-        //todo: this shouldbe calculated based on circumference of wheel, and current speed
-        const wheelAngle = mapLinear(myVehicle.vel.z, -carMaxSpeed, 0, Math.PI / 3, 0);
+    if (isBraking && myVehicle.vel.length() > 0.2) {
+        emitSmokeParticle(scene, dragsterModel, randFloatSpread(2), true);
+    }
+    // wheels rotation
 
-        const wheel_fl = dragsterModel.getObjectByName("wheel_fl");
-        const wheel_br = dragsterModel.getObjectByName("wheel_br");
-        const wheel_bl = dragsterModel.getObjectByName("wheel_bl");
-        const wheel_fr = dragsterModel.getObjectByName("wheel_fr");
-        for (const wheel of [wheel_fl, wheel_bl, wheel_br, wheel_fr]) {
-            if (wheel) {
-                wheel.rotation.x += wheelAngle
-            }
+    //todo: this shouldbe calculated based on circumference of wheel, and current speed
+    const wheelAngle = mapLinear(myVehicle.vel.z, -carMaxSpeed, 0, Math.PI / 3, 0);
+
+    const wheel_fl = dragsterModel.getObjectByName("wheel_fl");
+    const wheel_br = dragsterModel.getObjectByName("wheel_br");
+    const wheel_bl = dragsterModel.getObjectByName("wheel_bl");
+    const wheel_fr = dragsterModel.getObjectByName("wheel_fr");
+    for (const wheel of [wheel_fl, wheel_bl, wheel_br, wheel_fr]) {
+        if (wheel) {
+            wheel.rotation.x += wheelAngle
         }
     }
+
 
     // if car is going fast and turning fast
     if (myVehicle.vel.length() > 0.8 && (deltaX > 1 || deltaX < -1) && dragsterModel) {
