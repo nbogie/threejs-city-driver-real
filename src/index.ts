@@ -4,19 +4,19 @@
 // 1031685 threejs rainbow trails: https://openprocessing.org/sketch/1031685
 // 1020528 gintaras added sound, diff camera angle: https://openprocessing.org/sketch/1020528
 
-import { Color, Scene } from 'three';
+import { Scene } from 'three';
 import { mapLinear } from 'three/src/math/MathUtils';
-import { createCity, createRoad, createRoadStripes, createGroundPlane, recycleBuildings, updateBuildings, recycleRoadStripes } from './city';
-import { Mouse } from './mouse';
 import { CamConfig, cycleCameras, setupCamera, updateCamera } from './camera';
+import { createCity, createGroundPlane, createRoad, createRoadStripes, recycleBuildings, recycleRoadStripes, updateBuildings } from './city';
 import { setupHelpers } from './helpers';
-import { makeLightsAndAddToScene } from './lights';
+import { makeLightsAndAddToScene, updateLights } from './lights';
+import { Mouse } from './mouse';
 import { setupRenderer } from './renderer';
-import { setupStatsPanel } from './statsPanel';
 import { createSheepies, updateSheepies } from './sheep';
-import { updateSmokeParticles, deleteSmokeParticles } from './smoke';
-import { createVehicle, loadCarModel, Car, updateCar } from './vehicle';
+import { deleteSmokeParticles, updateSmokeParticles } from './smoke';
 import { loadSounds } from './sound';
+import { setupStatsPanel } from './statsPanel';
+import { Car, createVehicle, loadCarModel, updateCar } from './vehicle';
 
 export function setupThreeJSScene(): void {
 
@@ -122,8 +122,7 @@ export function setupThreeJSScene(): void {
     scene.add(road);
     scene.add(ground);
 
-    const skyColourTwo = new Color('skyblue');
-    const { ambLight } = makeLightsAndAddToScene(scene);
+    const mySceneLights = makeLightsAndAddToScene(scene);
 
     let frameCount = 1;
 
@@ -136,11 +135,7 @@ export function setupThreeJSScene(): void {
         updateCar(mouse, myVehicle, scene);
         updateHelpers(myVehicle);
 
-        const skyFraction = mapLinear(Math.sin(frameCount / 1000), -1, 1, 0, 1);
-        const ambLightFraction = mapLinear(Math.sin(frameCount / 1000), -1, 1, 0.6, 0.1);
-        scene.background = new Color(skyColourTwo).lerp(new Color('black'), skyFraction);
-        ambLight.intensity = ambLightFraction;
-
+        updateLights(mySceneLights, scene, frameCount);
         updateCamera(camConfig, myVehicle, camera, frameCount);
 
         recycleBuildings(myVehicle.mesh.position);

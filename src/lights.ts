@@ -1,6 +1,13 @@
-import { AmbientLight, DirectionalLight, Scene } from "three";
+import { AmbientLight, Color, DirectionalLight, Scene } from "three";
+import { mapLinear } from "three/src/math/MathUtils";
 
-export function makeLightsAndAddToScene(scene: Scene): { ambLight: AmbientLight; light: DirectionalLight; lowLight: DirectionalLight; } {
+interface MySceneLights {
+    ambLight: AmbientLight;
+    light: DirectionalLight;
+    lowLight: DirectionalLight;
+}
+
+export function makeLightsAndAddToScene(scene: Scene): MySceneLights {
     const light = new DirectionalLight(0xFFA050);
     light.position.set(2, 2, 100);
 
@@ -20,4 +27,13 @@ export function makeLightsAndAddToScene(scene: Scene): { ambLight: AmbientLight;
     };
     // scene.add(new THREE.DirectionalLightHelper(light, 5))
     // scene.add(new THREE.DirectionalLightHelper(lowLight, 5));
+}
+
+export function updateLights({ ambLight }: MySceneLights, scene: Scene, frameCount: number): void {
+    const skyColourTwo = new Color('skyblue');
+
+    const skyFraction = mapLinear(Math.sin(frameCount / 1000), -1, 1, 0, 1);
+    const ambLightFraction = mapLinear(Math.sin(frameCount / 1000), -1, 1, 0.6, 0.1);
+    scene.background = new Color(skyColourTwo).lerp(new Color('black'), skyFraction);
+    ambLight.intensity = ambLightFraction;
 }
