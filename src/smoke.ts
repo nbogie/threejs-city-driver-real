@@ -59,7 +59,6 @@ export function createParticle(position: Vector3, hue: number | null = null): Me
     mesh.position.copy(pos);
     mesh.rotation.x = randFloat(0, Math.PI * 2);
     mesh.rotation.y = randFloat(0, Math.PI * 2);
-    //TODO: put these on userData
     mesh.userData.life = randFloat(40, 70);
     mesh.userData.rotationSpeedX = randFloatSpread(0.06);
     mesh.userData.rotationSpeedY = randFloatSpread(0.06);
