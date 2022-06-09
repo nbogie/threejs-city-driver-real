@@ -1,4 +1,4 @@
-import { Object3D, Scene, Vector3 } from "three";
+import { Mesh, Object3D, Scene, Vector3 } from "three";
 import { randFloat, randFloatSpread } from "three/src/math/MathUtils";
 import { loadModel } from "./loadModel";
 import { createParticles } from "./smoke";
@@ -17,7 +17,7 @@ export interface Sheepie {
 export async function createSheepies(scene: Scene): Promise<void> {
     //todo: i think we should use Instanced mesh to share the geometry across all sheep meshes
     //https://threejs.org/docs/#api/en/objects/InstancedMesh
-
+    //However, we animate /toggle visibility parts of each mesh copy differently
     const sheepMesh = await loadModel("./assets/sheep.glb");
 
     //dev: check what submeshes the sheep model has...
@@ -32,7 +32,7 @@ export async function createSheepies(scene: Scene): Promise<void> {
         const sheepObj: Sheepie = {
             mesh: clone,
             velocity: new Vector3(0, 0, 0),
-            isDynamic: false,//true if we need to apply physics to this sheep...
+            isDynamic: false,//true if we need to apply simple physics to this sheep...
             hue: 0
         };
         scene.add(clone);
@@ -40,6 +40,14 @@ export async function createSheepies(scene: Scene): Promise<void> {
     }
 }
 
+/** 
+ * Update all sheep for this frame.  
+ * 
+ * This may involve scaring some, making some airborne, moving some on their flight path, etc.
+ * @param cleanupPosition position beyond which sheep will be recycled.
+ * @param carPosition position of car - used to decide which sheep are scared and/or booped
+ * @param shakeCamera function to call when we need to shake the camera
+*/
 export function updateSheepies(carPosition: Vector3, cleanupPosition: Vector3, {
     shakeCamera
 }: { shakeCamera: () => void }, scene: Scene): void {
@@ -63,30 +71,19 @@ export function updateSheepies(carPosition: Vector3, cleanupPosition: Vector3, {
         carBumperPosition.y += 0.4;
         if (sheep.mesh.position.distanceTo(carBumperPosition) < 20 &&
             Math.abs(sheep.mesh.position.x - carPosition.x) < 1) {
-
-            const config: PartsVisibilities = [
-                ["eyes_alarmed", true],
-                ["legs_alarmed", true],
-                ["eyes_sleepy", false],
-                ["legs_sleepy", false],
-            ];
-
-            setPartsVisibility(config, sheep.mesh);
+            //in our path
+            scareSheepieMesh(sheep.mesh);
         }
 
         if (sheep.mesh.position.distanceTo(carPosition) < 1) {
-            hitSheep(sheep, {
-                shakeCamera
-            });
+            hitSheep(sheep, { shakeCamera });
         }
 
         if (sheep.mesh.position.z - 30 > cleanupPosition.z) {
             respawnSheep(sheep, cleanupPosition);
-
         }
     }
 }
-
 export function farthestAirborneSheep(): Sheepie | null {
     let farthest = null;
     for (const sheep of sheepies) {
@@ -97,18 +94,10 @@ export function farthestAirborneSheep(): Sheepie | null {
     return farthest;
 }
 
-export function hitSheep(sheep: Sheepie, {
-    shakeCamera
-}: { shakeCamera: (amt: number) => void }): void {
-    const config: PartsVisibilities = [
-        ["eyes_alarmed", true],
-        ["legs_alarmed", true],
-        ["eyes_sleepy", false],
-        ["legs_sleepy", false],
-    ];
-
-    setPartsVisibility(config, sheep.mesh);
-
+export function hitSheep(
+    sheep: Sheepie,
+    { shakeCamera }: { shakeCamera: (amt: number) => void }): void {
+    scareSheepieMesh(sheep.mesh);
     sheep.hue = randFloat(0, 360);
 
     //pop up into the air a little
@@ -136,20 +125,33 @@ export function respawnSheep(sheep: Sheepie, playerPos: Vector3): void {
 export function resetSheepMesh(mesh: Object3D): void {
     const scale = randFloat(1.5, 2.5);
     mesh.scale.set(scale, scale, scale);
-    //this model has optional parts - two sets of eyes and legs for state. (*should really be done as an animation in gltf...)
+    unscareSheepieMesh(mesh);
 
+    mesh.position.copy(randomSheepPosition());
+    mesh.rotation.set(0, 0, 0);
+    mesh.rotation.y = randFloatSpread(2) * Math.PI / 4;
+}
+
+function unscareSheepieMesh(mesh: Object3D): void {
+    //this model has optional parts - two sets of eyes and legs for state. 
+    //(this should perhaps be done as an animation in gltf...)
     const config: PartsVisibilities = [
         ["eyes_alarmed", false],
         ["legs_alarmed", false],
         ["eyes_sleepy", true],
         ["legs_sleepy", true],
     ];
-
     setPartsVisibility(config, mesh);
-    mesh.position.copy(randomSheepPosition());
-    mesh.rotation.set(0, 0, 0);
-    mesh.rotation.y = randFloatSpread(2) * Math.PI / 4;
+}
 
+function scareSheepieMesh(mesh: Object3D): void {
+    const config: PartsVisibilities = [
+        ["eyes_alarmed", true],
+        ["legs_alarmed", true],
+        ["eyes_sleepy", false],
+        ["legs_sleepy", false],
+    ];
+    setPartsVisibility(config, mesh);
 }
 
 type PartsVisibilities = [string, boolean][]
