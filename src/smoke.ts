@@ -1,6 +1,7 @@
 import { BoxGeometry, Color, Group, Mesh, MeshLambertMaterial, Scene, Vector3 } from "three";
 import { randFloat, randFloatSpread } from "three/src/math/MathUtils";
 import { removeObjectFromScene } from "./util";
+import { WheelIndex } from "./vehicle";
 
 let particles: ParticleMesh[] = [];
 interface ParticleUserData {
@@ -22,19 +23,17 @@ const particleGeometryShared = new BoxGeometry(1, 1, 1);
 
 export function emitSmokeParticle(scene: Scene, carModel: Group, deltaX: number, isFront: boolean): void {
     const isLeftWheel = deltaX > 0;
-    //TODO: inefficient.  store these object references when car loaded.
-    const sideChar = isLeftWheel ? "l" : "r";
-    const endChar = isFront ? "f" : "b";
-    const wheelName = `wheel_${endChar}${sideChar}`;
-    const wheel = carModel.getObjectByName(wheelName);
-    if (wheel) {
-        const wheelWorldPos = new Vector3(0, 0, 0);
-        wheel.getWorldPosition(wheelWorldPos)
-        if (!isFront) {
-            wheelWorldPos.z += 0.5;
-        }
-        createParticles(scene, wheelWorldPos, 3);
+    const wheelIndex: WheelIndex = isLeftWheel ? (isFront ? "frontLeft" : "backLeft") : (isFront ? "backLeft" : "backRight")
+
+    const wheel = carModel.userData.wheels[wheelIndex]
+    console.assert(wheel, "Should be able to find wheel with index: " + wheelIndex)
+    const wheelWorldPos = new Vector3(0, 0, 0);
+    wheel.getWorldPosition(wheelWorldPos)
+    if (!isFront) {
+        wheelWorldPos.z += 0.5;
     }
+    createParticles(scene, wheelWorldPos, 3);
+
 }
 
 export function createParticles(scene: Scene, position: Vector3, numOfParticles: number, hue: number | null = null): void {

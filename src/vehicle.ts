@@ -1,10 +1,11 @@
-import { Group, Scene, Vector3 } from "three";
+import { Group, Object3D, Scene, Vector3 } from "three";
 import { lerp, mapLinear, randFloatSpread } from "three/src/math/MathUtils";
 import { loadModel } from "./loadModel";
 import { Mouse } from "./mouse";
 import { emitSmokeParticle } from "./smoke";
 
 const carMaxSpeed = 1.1;
+export type WheelIndex = "frontLeft" | "frontRight" | "backLeft" | "backRight";
 
 export interface Car {
     mesh: Group;
@@ -35,6 +36,24 @@ export async function loadCarModel(scene: Scene): Promise<Group> {
     }
     carModel.rotation.y = Math.PI;
     scene.add(carModel);
+
+    //Find the wheels sub-objects and cache references to them in userData, 
+    //rather than search for them each frame.
+    const wheels: Record<WheelIndex, Object3D> = {
+        frontLeft: getChildObjectByNameOrFail(carModel, "wheel_fl"),
+        frontRight: getChildObjectByNameOrFail(carModel, "wheel_fr"),
+        backLeft: getChildObjectByNameOrFail(carModel, "wheel_bl"),
+        backRight: getChildObjectByNameOrFail(carModel, "wheel_br"),
+    }
+    function getChildObjectByNameOrFail(parent: Group, partName: string): Object3D {
+        const part = parent.getObjectByName(partName);
+        if (!part) {
+            throw new Error("missing part in car model: " + partName);
+        }
+        return part;
+    }
+    carModel.userData.wheels = wheels;
+
     return carModel;
 }
 
@@ -80,25 +99,15 @@ export function updateCar(mouse: Mouse, myVehicle: Car, scene: Scene): void {
 
     //todo: this shouldbe calculated based on circumference of wheel, and current speed
     const wheelAngle = mapLinear(myVehicle.vel.z, -carMaxSpeed, 0, Math.PI / 3, 0);
+    const wheels: Object3D[] = Object.values(dragsterModel.userData.wheels)
 
-    const wheel_fl = dragsterModel.getObjectByName("wheel_fl");
-    const wheel_br = dragsterModel.getObjectByName("wheel_br");
-    const wheel_bl = dragsterModel.getObjectByName("wheel_bl");
-    const wheel_fr = dragsterModel.getObjectByName("wheel_fr");
-    for (const wheel of [wheel_fl, wheel_bl, wheel_br, wheel_fr]) {
-        if (wheel) {
-            wheel.rotation.x += wheelAngle
-        }
+    for (const wheel of wheels) {
+        wheel.rotation.x += wheelAngle
     }
-
 
     // if car is going fast and turning fast
     if (myVehicle.vel.length() > 0.8 && (deltaX > 1 || deltaX < -1)) {
         // it should emit particles from the outside wheel
-        // dragsterModel.visible = true;
-
         emitSmokeParticle(scene, dragsterModel, deltaX, false);
-    } else {
-        // dragsterModel.visible = false;
     }
 }
