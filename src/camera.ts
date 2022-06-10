@@ -9,7 +9,7 @@ export interface Pedestrian {
     pos: Vector3 | null;
 }
 
-export type CamNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+export type CamNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 export interface CamConfig {
     camNumber: CamNumber;
     pedestrian: Pedestrian;
@@ -23,7 +23,7 @@ export function setupCamera(dim: { w: number, h: number }): PerspectiveCamera {
 }
 
 export function cycleCameras(camConfig: CamConfig): void {
-    camConfig.camNumber = ((camConfig.camNumber + 1) % 7) as CamNumber;
+    camConfig.camNumber = ((camConfig.camNumber + 1) % 8) as CamNumber;
 }
 
 export function updateCamera({ camNumber, pedestrian, shakeAmount }: CamConfig, myVehicle: Car, sheepies: Sheepie[], cam: Camera, frameCount: number): void {
@@ -48,6 +48,9 @@ export function updateCamera({ camNumber, pedestrian, shakeAmount }: CamConfig, 
             break;
         case 6:
             updateRearFacingCam(myVehicle.mesh, cam, shakeAmount);
+            break;
+        case 7:
+            updateTopCam(myVehicle.mesh, cam);
             break;
         default:
     }
@@ -84,6 +87,16 @@ export function updateBoringChaseCam(targetMesh: Object3D, cam: Camera, shakeAmo
     const shake = randFloatSpread(0.2) * shakeAmount;
     cam.position.x += shake;
 
+}
+export function updateTopCam(targetMesh: Object3D, cam: Camera): void {
+    cam.position.x = targetMesh.position.x / 2;
+    cam.position.y = 30;
+    cam.position.z = targetMesh.position.z + 6;
+
+    const targetPosition = targetMesh.position.clone();
+    targetPosition.z -= 20;
+
+    cam.lookAt(targetPosition);
 }
 
 export function updateSheepCam(cam: Camera, sheepies: Sheepie[], fnWhenNothingExcitingHappening: () => void): void {
