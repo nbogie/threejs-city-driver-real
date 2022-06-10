@@ -98,7 +98,7 @@ export async function setupThreeJSScene(): Promise<void> {
         road.position.z = myVehicle.mesh.position.z;
         ground.position.z = myVehicle.mesh.position.z;
 
-        updateCar(mouse, myVehicle, scene);
+        updateCar(mouse, myVehicle, scene, frameCount);
         updateHelpers(myVehicle);
 
         updateLightsAndSky(mySceneLights, scene, frameCount);

@@ -58,7 +58,7 @@ export async function loadCarModel(scene: Scene): Promise<Group> {
     return carModel;
 }
 
-export function updateCar(mouse: Mouse, myVehicle: Car, scene: Scene): void {
+export function updateCar(mouse: Mouse, myVehicle: Car, scene: Scene, frameCount: number): void {
     const isAccelerating = mouse.leftButtonDown && !mouse.rightButtonDown;
 
     const isBraking = mouse.rightButtonDown;
@@ -73,16 +73,23 @@ export function updateCar(mouse: Mouse, myVehicle: Car, scene: Scene): void {
         myVehicle.acc.z = lerp(myVehicle.acc.z, 0, 0.1);
     }
 
+    const isMoving = myVehicle.vel.length() > 0.01 || myVehicle.isFlying;
+
     myVehicle.vel = myVehicle.vel.add(myVehicle.acc);
     myVehicle.vel = myVehicle.vel.multiplyScalar(0.995).clampScalar(-carMaxSpeed, 0);
-    myVehicle.mesh.position.add(myVehicle.vel);
 
-    const desiredCarX = mapLinear(mouse.x, -0.5, 0.5, -3, 3);
-    const desiredCarY = myVehicle.isFlying ? mapLinear(mouse.y, -0.5, 0.5, 8, 0) : 0;
-    myVehicle.mesh.position.x = lerp(myVehicle.mesh.position.x, desiredCarX, 0.1);
+    myVehicle.mesh.position.add(myVehicle.vel);
+    const leftRightBobble = isMoving ? 0.1 * Math.cos(333 + frameCount / 13) : 0;
+    const flyingBobbleY = 0.1 * Math.sin(frameCount / 10);
+    const desiredCarX = leftRightBobble + mapLinear(mouse.x, -0.5, 0.5, -3, 3);
+    const desiredCarY = myVehicle.isFlying ? flyingBobbleY + mapLinear(mouse.y, -0.5, 0.5, 8, 0) : 0;
+
+    if (isMoving) {
+        myVehicle.mesh.position.x = lerp(myVehicle.mesh.position.x, desiredCarX, 0.1);
+    }
     myVehicle.mesh.position.y = lerp(myVehicle.mesh.position.y, desiredCarY, 0.1);
 
-    const deltaX = desiredCarX - myVehicle.mesh.position.x;
+    const deltaX = isMoving ? desiredCarX - myVehicle.mesh.position.x : 0;
     const rollAngle = mapLinear(deltaX, -6, 6, Math.PI / 6, -Math.PI / 6);
     const yawAngle = Math.PI + rollAngle;
     const pitchAngle = mapLinear(myVehicle.acc.z, 0.2, -0.2, -1, 1) * Math.PI / 16;
